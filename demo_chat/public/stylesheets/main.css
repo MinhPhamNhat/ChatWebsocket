@@ -166,8 +166,9 @@ html {
 }
 
 .video_cam {
-    margin-left: 250px;
-    margin-top: 10px;
+    position: absolute;
+    right: 30px;
+    margin-top: 23px;
 }
 
 .video_cam span {
@@ -224,7 +225,7 @@ html {
     color: white;
     cursor: pointer;
     font-size: 20px;
-    margin-top: 10px;
+    margin-top: 35px;
     margin-right: 5px;
 }
 
