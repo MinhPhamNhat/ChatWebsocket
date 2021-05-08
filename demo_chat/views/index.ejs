@@ -1,0 +1,272 @@
+<html>
+
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
+    <link href="stylesheets/main.css" rel="stylesheet">
+    <script src="javascript/main.js"></script>
+
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+
+
+    <title>Chat</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid h-100">
+        <div class="row justify-content-center h-100">
+            <div class="col-md-4 col-xl-3 chat">
+                <div class="card mb-sm-3 mb-md-0 contacts_card">
+                    <div class="card-header">
+                        <div class="input-group">
+                            <input type="text" placeholder="Search..." name="" class="form-control search">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body contacts_body">
+                        <ui class="contacts">
+                            <!-- <li class="active">
+                                <div class="d-flex bd-highlight">
+                                    <div class="img_cont">
+                                        <img src="img/32063.jpg" class="rounded-circle user_img">
+                                        <span class="online_icon"></span>
+                                    </div>
+                                    <div class="user_info">
+                                        <span>Maryam Naz</span>
+                                        <p>Maryam is online</p>
+                                    </div>
+                                </div>
+                            </li> -->
+                        </ui>
+                        <div id="online-notification" class="alert alert-success position-fixed small" style="bottom: 20px; left: 20px">
+                            <strong>Trần Quang Trí</strong> vừa mới online
+                        </div>
+                        <div id="offline-notification" class="alert alert-danger position-fixed small" style="bottom: 20px; right: 20px">
+                            <strong>Trần Quang Trí</strong> đã thoát khỏi ứng dụng
+                        </div>
+                        <input type="hidden" id="hidden-name" value='<%=name%>'>
+                    </div>
+                    <div class="card-footer"></div>
+                </div>
+            </div>
+            <div class="col-md-8 col-xl-6 chat">
+                <div class="card">
+                    <div class="card-header msg_head">
+                        <div class="d-flex bd-highlight">
+                            <div class="img_cont">
+                                <img src="img/32063.jpg" class="rounded-circle user_img">
+                                <span class="online_icon"></span>
+                            </div>
+                            <div class="user_info">
+                                <span><%=name%></span>
+                            </div>
+                            <div class="video_cam">
+                                <span><i class="fas fa-phone"></i></span>
+                                <span><i class="fas fa-video"></i></span>
+                            </div>
+                        </div>
+                        <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
+                        <div class="action_menu">
+                            <ul>
+                                <li><i class="fas fa-user-circle"></i> View profile</li>
+                                <li><i class="fas fa-users"></i> Add to close friends</li>
+                                <li><i class="fas fa-plus"></i> Add to group</li>
+                                <li><i class="fas fa-ban"></i> Block</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body msg_card_body">
+                        <div>a</div>
+                        <!-- <div class="d-flex justify-content-start mb-4">
+                            <div class="img_cont_msg">
+                                <img src="img/32063.jpg" class="rounded-circle user_img_msg">
+                            </div>
+                            <div class="msg_cotainer">
+                                Hi, how are you samim?
+                                <span class="msg_time">8:40 AM, Today</span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mb-4">
+                            <div class="msg_cotainer_send">
+                                Hi Maryam i am good tnx how about you?
+                                <span class="msg_time_send">8:55 AM, Today</span>
+                            </div>
+                            <div class="img_cont_msg">
+                                <img src="img/32063.jpg" class="rounded-circle user_img_msg">
+                            </div>
+                        </div> -->
+                        <!-- <div class="d-flex justify-content-start mb-4">
+                            <div class="img_cont_msg">
+                                <img src="img/32063.jpg" class="rounded-circle user_img_msg">
+                            </div>
+                            <div class="msg_cotainer">
+                                I am good too, thank you for your chat template
+                                <span class="msg_time">9:00 AM, Today</span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mb-4">
+                            <div class="msg_cotainer_send">
+                                You welcome Maryam
+                                <span class="msg_time_send">9:05 AM, Today</span>
+                            </div>
+                            <div class="img_cont_msg">
+                                <img src="img/32063.jpg" class="rounded-circle user_img_msg">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-start mb-4">
+                            <div class="img_cont_msg">
+                                <img src="img/32063.jpg" class="rounded-circle user_img_msg">
+                            </div>
+                            <div class="msg_cotainer">
+                                I am looking for your next templates
+                                <span class="msg_time">9:07 AM, Today</span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mb-4">
+                            <div class="msg_cotainer_send">
+                                Ok, thank you have a good day
+                                <span class="msg_time_send">9:10 AM, Today</span>
+                            </div>
+                            <div class="img_cont_msg">
+                                <img src="img/32063.jpg" class="rounded-circle user_img_msg">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-start mb-4">
+                            <div class="img_cont_msg">
+                                <img src="img/32063.jpg" class="rounded-circle user_img_msg">
+                            </div>
+                            <div class="msg_cotainer">
+                                Bye, see you
+                                <span class="msg_time">9:12 AM, Today</span>
+                            </div>
+                        </div> -->
+                    </div>
+                    <div class="card-footer">
+                        <form id="form" class="input-group" action="">
+                            <input id="input" class="form-control type_msg" autocomplete="off" placeholder="Type your message..." />
+                            <div class="input-group-append">
+                                <button class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></button>
+                            </div>
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
+<script>
+    var userName;
+
+    $(document).ready(() => {
+        userName = $("#hidden-name").val();
+
+        $(document).on("click", '.active .avatar', (e) => {
+            var userIdClicked = e.target.dataset.id
+        })
+
+    })
+
+    const socket = io();
+    var id;
+    socket.on('connect', () => {
+        socket.emit("user-join", userName)
+
+        socket.on('user-id', (userId) => {
+            id = userId
+        })
+        socket.on('list-user', showUserOnline)
+
+    })
+
+    const showUserOnline = ({
+        users,
+        eventUser
+    }) => {
+        var numberOfOnline = users.length - 1
+        $(".contacts .active").remove()
+        users.forEach(u => {
+            if (u.id !== id)
+                $(".contacts").prepend(createUserTag(u))
+            else {
+                console.log(u.id, u.name)
+            }
+        })
+        $(".no-online").text(numberOfOnline)
+        if (eventUser.id !== id) {
+            if (eventUser.action) {
+                $("#online-notification strong").text(eventUser.name)
+                $("#online-notification").show(300)
+                setTimeout(() => {
+                    $("#online-notification").hide(300)
+                }, 2000)
+            } else {
+                $("#offline-notification strong").text(eventUser.name)
+                $("#offline-notification").show(300)
+                setTimeout(() => {
+                    $("#offline-notification").hide(300)
+                }, 2000)
+            }
+        }
+    }
+
+    const createUserTag = (user) => `
+    <li class="active" >
+        <div class="d-flex bd-highlight" data-id="${user.id}">
+            <div class="img_cont" >
+                <div class="avatar rounded-circle" data-id="${user.id}">${user.name.split(" ")[user.name.split(" ").length-1][0]}</div>
+                <span class="online_icon"></span>
+            </div>
+            <div class="user_info">
+                <span>${user.name}</span>
+                <p>${user.name} is online</p>
+            </div>
+        </div>
+    </li>`
+
+    // socket.on("hello", (data)=>{
+    //   console.log(data)
+    // })
+
+    var messages = document.getElementById('msg_card_body');
+    var form = document.getElementById('form');
+    var input = document.getElementById('input');
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (input.value) {
+            socket.emit('chat message', input.value);
+            input.value = '';
+        }
+    });
+
+    socket.on('chat message', function(msg) {
+        var item = document.createElement('div');
+        item.textContent = msg;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+</script>
+
+</html>
