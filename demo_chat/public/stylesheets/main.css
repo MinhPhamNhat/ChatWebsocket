@@ -111,7 +111,7 @@ html {
     padding-top: 10px;
 }
 
-.user_img {
+.user_img .avatar {
     height: 70px;
     width: 70px;
     border: 1.5px solid #f5f6fa;
@@ -132,6 +132,11 @@ html {
 .img_cont_msg {
     height: 40px;
     width: 40px;
+}
+
+.img_cont_msg .username {
+    color: white;
+    border-radius: 10px;
 }
 
 .online_icon {
@@ -168,7 +173,6 @@ html {
 .video_cam {
     position: absolute;
     right: 30px;
-    margin-top: 23px;
 }
 
 .video_cam span {
@@ -225,7 +229,7 @@ html {
     color: white;
     cursor: pointer;
     font-size: 20px;
-    margin-top: 35px;
+    margin-top: 10px;
     margin-right: 5px;
 }
 

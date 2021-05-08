@@ -5,9 +5,11 @@ var cookieParser = require('cookie-parser');
 var passport = require("passport")
 var socketio = require('socket.io')
 var authen = require("./middleware/authen")
+var messages = require("./middleware/messages")
+
 var session = require("express-session")
-const mongoose = require('mongoose')
-const http = require('http')
+    // const mongoose = require('mongoose')
+    // const http = require('http')
 
 var app = express();
 require("dotenv").config()
@@ -16,10 +18,10 @@ require("./config/passport")
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-mongoose.connect(process.env.MONGODB_CONFIG, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+// mongoose.connect(process.env.MONGODB_CONFIG, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true
+// })
 
 // app.use(logger('dev'));
 app.use(express.json());

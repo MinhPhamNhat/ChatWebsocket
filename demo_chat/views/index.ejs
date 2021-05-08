@@ -41,6 +41,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="card-body contacts_body">
                         <ui class="contacts">
                             <!-- <li class="active">
@@ -71,12 +72,12 @@
                 <div class="card">
                     <div class="card-header msg_head">
                         <div class="d-flex bd-highlight">
-                            <div class="img_cont">
-                                <img src="img/32063.jpg" class="rounded-circle user_img">
+                            <!-- <div class="img_cont">
+                                <img src="<%=avatar%>" class="rounded-circle avatar">
                                 <span class="online_icon"></span>
-                            </div>
+                            </div> -->
                             <div class="user_info">
-                                <span><%=name%></span>
+                                <span>CHAT ROOM</span>
                             </div>
                             <div class="video_cam">
                                 <span><i class="fas fa-phone"></i></span>
@@ -94,68 +95,22 @@
                         </div>
                     </div>
                     <div class="card-body msg_card_body">
-                        <div>a</div>
                         <!-- <div class="d-flex justify-content-start mb-4">
                             <div class="img_cont_msg">
                                 <img src="img/32063.jpg" class="rounded-circle user_img_msg">
                             </div>
                             <div class="msg_cotainer">
-                                Hi, how are you samim?
+                                <p>Hi, how are you samim?</p>
                                 <span class="msg_time">8:40 AM, Today</span>
                             </div>
-                        </div>
-                        <div class="d-flex justify-content-end mb-4">
+                        </div> -->
+                        <!-- <div class="d-flex justify-content-end mb-4">
                             <div class="msg_cotainer_send">
                                 Hi Maryam i am good tnx how about you?
                                 <span class="msg_time_send">8:55 AM, Today</span>
                             </div>
                             <div class="img_cont_msg">
                                 <img src="img/32063.jpg" class="rounded-circle user_img_msg">
-                            </div>
-                        </div> -->
-                        <!-- <div class="d-flex justify-content-start mb-4">
-                            <div class="img_cont_msg">
-                                <img src="img/32063.jpg" class="rounded-circle user_img_msg">
-                            </div>
-                            <div class="msg_cotainer">
-                                I am good too, thank you for your chat template
-                                <span class="msg_time">9:00 AM, Today</span>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-end mb-4">
-                            <div class="msg_cotainer_send">
-                                You welcome Maryam
-                                <span class="msg_time_send">9:05 AM, Today</span>
-                            </div>
-                            <div class="img_cont_msg">
-                                <img src="img/32063.jpg" class="rounded-circle user_img_msg">
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-start mb-4">
-                            <div class="img_cont_msg">
-                                <img src="img/32063.jpg" class="rounded-circle user_img_msg">
-                            </div>
-                            <div class="msg_cotainer">
-                                I am looking for your next templates
-                                <span class="msg_time">9:07 AM, Today</span>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-end mb-4">
-                            <div class="msg_cotainer_send">
-                                Ok, thank you have a good day
-                                <span class="msg_time_send">9:10 AM, Today</span>
-                            </div>
-                            <div class="img_cont_msg">
-                                <img src="img/32063.jpg" class="rounded-circle user_img_msg">
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-start mb-4">
-                            <div class="img_cont_msg">
-                                <img src="img/32063.jpg" class="rounded-circle user_img_msg">
-                            </div>
-                            <div class="msg_cotainer">
-                                Bye, see you
-                                <span class="msg_time">9:12 AM, Today</span>
                             </div>
                         </div> -->
                     </div>
@@ -174,6 +129,7 @@
         </div>
     </div>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.1/qs.min.js" integrity="sha512-aTKlYRb1QfU1jlF3k+aS4AqTpnTXci4R79mkdie/bp6Xm51O5O3ESAYhvg6zoicj/PD6VYY0XrYwsWLcvGiKZQ==" crossorigin="anonymous"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
 <script>
@@ -197,6 +153,7 @@
             id = userId
         })
         socket.on('list-user', showUserOnline)
+
 
     })
 
@@ -235,38 +192,63 @@
     <li class="active" >
         <div class="d-flex bd-highlight" data-id="${user.id}">
             <div class="img_cont" >
-                <div class="avatar rounded-circle" data-id="${user.id}">${user.name.split(" ")[user.name.split(" ").length-1][0]}</div>
+                <div class="avatar rounded-circle" data-id="${user.id}"><b>${user.name.split(" ")[user.name.split(" ").length-1][0]}</b></div>
                 <span class="online_icon"></span>
             </div>
             <div class="user_info">
                 <span>${user.name}</span>
-                <p>${user.name} is online</p>
+                <p>Online</p>
             </div>
         </div>
     </li>`
 
-    // socket.on("hello", (data)=>{
-    //   console.log(data)
-    // })
+    const chatForm = document.getElementById('form')
+    const chatMessage = document.querySelector('.msg_card_body')
 
-    var messages = document.getElementById('msg_card_body');
-    var form = document.getElementById('form');
-    var input = document.getElementById('input');
 
-    form.addEventListener('submit', function(e) {
+
+
+
+
+    //Msg from server
+    socket.on('message', messages => {
+        console.log(messages)
+        OutputMsg(messages)
+
+        //Scroll down
+        chatMessage.scrollTop = chatMessage.scrollHeight
+    })
+
+    //Message submit
+    chatForm.addEventListener('submit', e => {
         e.preventDefault();
-        if (input.value) {
-            socket.emit('chat message', input.value);
-            input.value = '';
-        }
-    });
 
-    socket.on('chat message', function(msg) {
-        var item = document.createElement('div');
-        item.textContent = msg;
-        messages.appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
-    });
+        const msg = e.target.elements.input.value
+
+
+        // Emit msg to server
+        socket.emit('chatMessage', msg)
+
+        // Clear input
+        e.target.elements.input.value = ''
+        e.target.elements.input.focus()
+    })
+
+
+    // OutputMsg function
+    function OutputMsg(msg) {
+        const div = document.createElement('div')
+        div.innerHTML = `<div class="d-flex justify-content-start mb-4">
+                            <div class="img_cont_msg ">
+                                <div class="username"><b>${msg.username}</b></div>
+                            </div>
+                            <div class="msg_cotainer">
+                                <p>${msg.text}</p>
+                                <span class="msg_time">${msg.time}</span>
+                            </div>
+                        </div>`
+        document.querySelector('.msg_card_body').appendChild(div)
+    }
 </script>
 
 </html>
