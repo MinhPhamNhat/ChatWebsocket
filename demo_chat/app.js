@@ -6,12 +6,20 @@ var passport = require("passport")
 var socketio = require('socket.io')
 var authen = require("./middleware/authen")
 var session = require("express-session")
+const mongoose = require('mongoose')
+const http = require('http')
+
 var app = express();
 require("dotenv").config()
 require("./config/passport")
     // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+mongoose.connect(process.env.MONGODB_CONFIG, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
 
 // app.use(logger('dev'));
 app.use(express.json());
