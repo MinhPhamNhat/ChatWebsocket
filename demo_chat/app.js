@@ -6,9 +6,11 @@ var passport = require("passport")
 var socketio = require('socket.io')
 var authen = require("./middleware/authen")
 var messages = require("./middleware/messages")
+const bodyParser = require("body-parser");
+
 
 var session = require("express-session")
-    // const mongoose = require('mongoose')
+const mongoose = require('mongoose')
     // const http = require('http')
 
 var app = express();
@@ -18,10 +20,7 @@ require("./config/passport")
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// mongoose.connect(process.env.MONGODB_CONFIG, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true
-// })
+
 
 // app.use(logger('dev'));
 app.use(express.json());
@@ -31,6 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: "demo_chat" }))
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(bodyParser.json());
 
 const indexRouter = require("./routes/IndexRouter")
 const loginRouter = require("./routes/LoginRouter")
@@ -60,4 +60,4 @@ var server = app.listen(PORT, console.log(HOST + ":" + PORT))
 
 const io = socketio(server)
 
-module.exports = app;
+module.exports = app

@@ -63,7 +63,7 @@
                         <div id="offline-notification" class="alert alert-danger position-fixed small" style="bottom: 20px; right: 20px">
                             <strong>Trần Quang Trí</strong> đã thoát khỏi ứng dụng
                         </div>
-                        <input type="hidden" id="hidden-name" value='<%=name%>'>
+                        <input type="hidden" id="hidden-name" value='<%= name %>'>
                     </div>
                     <div class="card-footer"></div>
                 </div>
@@ -95,24 +95,19 @@
                         </div>
                     </div>
                     <div class="card-body msg_card_body">
-                        <!-- <div class="d-flex justify-content-start mb-4">
-                            <div class="img_cont_msg">
-                                <img src="img/32063.jpg" class="rounded-circle user_img_msg">
+                        <% message_data.forEach(value => {%>
+                            <div class="d-flex justify-content-start mb-4">
+                                <div class="img_cont_msg ">
+                                    <div class="username"><b><%= value.username %></b></div>
+                                </div>
+                                <div class="msg_cotainer">
+                                    <p>
+                                        <%= value.content %>
+                                    </p>
+                                    <span class="msg_time"><%= value.time %></span>
+                                </div>
                             </div>
-                            <div class="msg_cotainer">
-                                <p>Hi, how are you samim?</p>
-                                <span class="msg_time">8:40 AM, Today</span>
-                            </div>
-                        </div> -->
-                        <!-- <div class="d-flex justify-content-end mb-4">
-                            <div class="msg_cotainer_send">
-                                Hi Maryam i am good tnx how about you?
-                                <span class="msg_time_send">8:55 AM, Today</span>
-                            </div>
-                            <div class="img_cont_msg">
-                                <img src="img/32063.jpg" class="rounded-circle user_img_msg">
-                            </div>
-                        </div> -->
+                            <% }) %>
                     </div>
                     <div class="card-footer">
                         <form id="form" class="input-group" action="">

@@ -1,5 +1,8 @@
 const formatMessage = require("./middleware/messages");
+const Message = require('./models/message')
+const connect = require('./middleware/dbconnect')
 var { userJion, getCurrentUser } = require("./middleware/users")
+
 const io = require("socket.io")()
 var numberOfUserOnline = 0
 var users = []
@@ -38,7 +41,12 @@ io.on('connection', socket => {
     socket.on('chatMessage', msg => {
         var index = users.findIndex(u => u.id == socket.id)
         var name = users[index].name
-        io.emit('message', formatMessage(name, msg))
+        formatMessages = formatMessage(name, msg)
+        io.emit('message', formatMessages)
+        connect.then(db => {
+            let msg = new Message({ username: name, content: msg, time: formatMessages.time })
+            msg.save()
+        })
     })
 
 
