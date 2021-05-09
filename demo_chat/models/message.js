@@ -4,15 +4,15 @@ const Schema = mongoose.Schema
 
 const messageSchema = new Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    userId: {
+    fromUser: {
         type: String,
         ref: 'User'
     },
-    roomId: {
+    toUser: {
         type: String,
-        ref: 'Room'
+        ref: 'User'
     },
-    content: String,
+    message: String,
     time: String
 })
 

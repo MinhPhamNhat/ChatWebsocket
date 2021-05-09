@@ -27,7 +27,11 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"></script>
 </head>
-
+<style>
+    .typing-msg{
+        display: none;
+    }
+</style>
 <body>
     <div class="container-fluid h-100">
         <div class="row justify-content-center">
@@ -48,7 +52,7 @@
                 <div class="card mb-sm-3 mb-md-0 contacts_card">
                     <div class="card-header">
                         <div class="input-group">
-                            <input type="text" placeholder="Search..." name="" onkeyup=typingCatch(this) onkeydown=typingStopCatch(this) class="form-control search search-holder">
+                            <input type="text" placeholder="Search..." name="" onkeyup=searchingCatch(this) class="form-control search search-holder">
                             <div class="input-group-prepend">
                                 <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
                             </div>
@@ -88,55 +92,135 @@
 
     })
 
+    const socket = io();
+    var id;
+    socket.on('connect', () => {
+        socket.emit("user-join", userId)
+
+        // socket.on('user-id', (userId) => {
+        //     id = userId
+        // })
+
+        socket.on('list-user', showUserOnline)
+
+    })
+
+    var typingTimer;
+    var doneTypingInterval = 1000;
+
+    const typingCatch = (e) => {
+        var userChatId = e.dataset.id
+        var name = e.dataset.name
+        socket.emit("typing", { userChatId, name })
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => { socket.emit("typing-done",  { userChatId, name }) }, doneTypingInterval);
+    }
+
+    const typingStopCatch = (e) => {
+        clearTimeout(typingTimer);
+    }
+
+    socket.on("typing", (data) => {
+        $(".typing-msg strong").text(data.name)
+        $(".typing-msg").show()
+    })
+
+    socket.on("typing-done", (data) => {
+        $(".typing-msg strong").text('')
+        $(".typing-msg").hide()
+    })
+
+    socket.on("send-message", (data)=>{
+        createMessage(data)
+    })
+
+    const createMessage = (message) => {
+        var isSender = message.fromUser.userId===userId
+        if (isSender){
+            var msgCont = $(`.chat-${message.toUser.userId} .msg_card_body `)
+        }else{
+            var msgCont = $(`.chat-${message.fromUser.userId} .msg_card_body `)
+        }
+        msgCont.append(createMessageTag(message, isSender))
+    }
+
+    const formatTime = (time) => {
+        var time = new Date(time)
+        var hours = time.getHours()/10>=1?time.getHours():"0"+time.getHours()
+        var minutes = time.getMinutes()/10>=1?time.getMinutes():"0"+time.getMinutes()
+        return `${hours}:${minutes}`
+    }
+
+    const createMessageTag = (message, isSender)=>{
+        console.log(message)
+        if (isSender){
+            return `
+            <div class="d-flex justify-content-end mb-4">
+                <div class="msg_cotainer_send">
+                    ${message.message}
+                    <span class="msg_time_send">${formatTime(message.time)}</span>
+                </div>
+                <div class="img_cont_msg">
+                    <img src=" ${message.fromUser.picture}" class="rounded-circle user_img_msg">
+                </div>
+            </div>
+            `
+        }else{
+            return `
+            <div class="d-flex justify-content-start mb-4">
+                <div class="img_cont_msg">
+                    <img src="${message.toUser.picture}" class="rounded-circle user_img_msg">
+                </div>
+                <div class="msg_cotainer">
+                    ${message.message}
+                    <span class="msg_time">${formatTime(message.time)}</span>
+                </div>
+            </div>
+            `
+        }
+    }
+
+    const sendChat = (e) =>{
+        var keycode = e.which || e.keyCode;
+        if (keycode === 13){
+            var userChatId = e.target.dataset.id
+            var message = e.target.value
+            socket.emit('send-message', {from: userId, message, to:userChatId})
+        }
+    }
+
+    const searchingCatch = (e) => {
+        var text = e.value
+        socket.emit("searching", {
+                text
+            })
+    }
 
     const chatWith = (e) => {
         var userIdClicked = e.dataset.id
-        var userIdLogin = `<%=user._id%>`
-        var roomId
-
-
-        socket.emit("get-user-info", userIdClicked)
-
-        socket.on("get-user-info", (userClicked) => {
-            var roomIdClicked = []
-            roomIdClicked.push(userClicked.roomId)
-            socket.emit('check-roomId', userIdLogin)
-
-            socket.on('check-roomId', (userLogin) => {
-                var roomIdLogin = []
-                roomIdLogin.push(userLogin.roomId)
-
-                roomIdLogin.forEach((rL) => {
-                    roomIdClicked.forEach((rC) => {
-                        if (rL !== undefined && rC !== undefined && rL === rC) {
-                            roomId = rL
-                        }
-                    })
-                })
-                if (roomId === null) {
-                    socket.emit('create-roomId', ({
-                        userIdLogin,
-                        userIdClicked
-                    }))
-                }
-            })
-
-            if (userClicked) {
-                $('li[class^="active"]').remove()
-                $(`.user-${userClicked.user._id}`).addClass("active")
+        currentChat = userIdClicked
+        
+        socket.emit("get-into-chat", ({fromUser: userId, toUser: userIdClicked}))
+        
+        socket.on("get-into-chat", (data) => {
+            var userClickedInfo = data.user
+            var messages = data.messages
+            if (userClickedInfo) {
+                $('li[class*="active"]').removeClass("active")
+                $(`.user-${userClickedInfo._id}`).addClass("active")
                 $(".chat_room .card").remove()
                 var div = document.createElement('div')
                 div.innerHTML =
                     `
-                <div class="card" data-id = "${userClicked.user._id}">
+                <div class="card chat-${userClickedInfo._id}" data-id ="${userClickedInfo._id}">
                     <div class="card-header msg_head">
                         <div class="d-flex bd-highlight">
                             <div class="img_cont">
-                                <div class="avatar rounded-circle"><b><img src="${userClicked.user.picture}"></b></div>
-                                <span class="online_icon"></span>
+                                <div class="avatar rounded-circle"><b><img src="${userClickedInfo.picture}"></b></div>
+                                <span class="online_icon ${!userClickedInfo.active?"offline":""}"></span>
                             </div>
                             <div class="user_info">
-                                <span>${userClicked.user.name}</span>
+                                <span>${userClickedInfo.name}</span>
                             </div>
                             <div class="video_cam">
                                 <span><i class="fas fa-phone"></i></span>
@@ -156,103 +240,27 @@
                     <div class="card-body msg_card_body">
                     </div>
                     <div class="card-footer">
-                        <form id="form" class="input-group" action="">
-                            <input id="input" class="form-control type_msg" autocomplete="off" placeholder="Type your message..." />
+                        <p class="typing-msg"><strong></strong> đang gõ ... </p>
+                        <div id="form" class="input-group" action="">
+                            <input id="input"  onkeyup="typingCatch(this);sendChat(event)" onkeydown=typingStopCatch(this) data-id="${userClickedInfo._id}" data-name="${userClickedInfo.name}" class="form-control type_msg" autocomplete="off" placeholder="Type your message..." />
                             <div class="input-group-append">
                                 <button class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></button>
                             </div>
-                        </form>
+                        </div>
 
                     </div>
 
                 </div>
             `
                 document.querySelector('.chat_room').appendChild(div)
-                const chatForm = document.getElementById('form')
 
-                //Message submit
-                chatForm.addEventListener('submit', e => {
-                    e.preventDefault();
-
-                    const msg = e.target.elements.input.value
-                    console.log(roomId)
-                        // Emit msg to server
-                    socket.emit('chatMessage', ({
-                        msg,
-                        userIdLogin,
-                        roomId
-                    }))
-
-                    // Clear input
-                    e.target.elements.input.value = ''
-                    e.target.elements.input.focus()
+                messages.forEach(msg => {
+                    $(`.chat-${userClickedInfo._id}  .msg_card_body`).append(createMessageTag(msg, msg.fromUser._id===userId))
                 })
-
-                //Msg from server
-                const chatMessage = document.querySelector('.msg_card_body')
-                socket.on('message', messages => {
-                    OutputMsg(messages)
-
-                    //Scroll down
-                    chatMessage.scrollTop = chatMessage.scrollHeight
-                })
-
-                // OutputMsg function
-                function OutputMsg(msg) {
-                    var div_chat = document.createElement('div')
-                    div_chat.innerHTML = `<div class="d-flex justify-content-start mb-4">
-                            <div class="img_cont_msg ">
-                                <div class="avatar rounded-circle"><b><img src="<%= user.picture%>"></b></div>
-                            </div>
-                            <div class="msg_cotainer">
-                                <p>${msg.text}</p>
-                                <span class="msg_time">${msg.time}</span>
-                            </div>
-                        </div>`
-                    document.querySelector('.msg_card_body').appendChild(div_chat)
-                }
-                document.querySelector('.msg_card_body').scrollTop = document.querySelector('.msg_card_body').scrollHeight
             }
-
         })
-
-
-
-
-
     }
-
-
-
-    const socket = io();
-    var id;
-    socket.on('connect', () => {
-        socket.emit("user-join", userId)
-
-        // socket.on('user-id', (userId) => {
-        //     id = userId
-        // })
-
-        socket.on('list-user', showUserOnline)
-
-    })
-
-    var typingTimer;
-    var doneTypingInterval = 100;
-
-    const typingCatch = (e) => {
-        var text = e.value
-        socket.emit("searching", {
-                text
-            })
-            // clearTimeout(typingTimer);
-            // typingTimer = setTimeout(() => { socket.emit("typing", { text }) }, doneTypingInterval);
-    }
-
-    const typingStopCatch = (e) => {
-        // clearTimeout(typingTimer);
-    }
-
+    
     const showUserOnline = ({
         users,
         eventUser,

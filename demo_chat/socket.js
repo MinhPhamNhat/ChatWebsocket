@@ -69,31 +69,45 @@ io.on('connection', socket => {
 
     })
 
-    socket.on("get-user-info", async(userId) => {
-        var user = await User.findById(userId).exec()
-        socket.emit("get-user-info", { user })
+    socket.on("get-into-chat", async(data) => {
+        var chatfromUser = data.fromUser
+        var chatToUser = data.toUser
+        var user = await User.findById(chatToUser).exec()
+        var isActive = users.findIndex(u => u.chatToUser == chatToUser)!==-1
+
+        var messages = await Message.find({fromUser: chatfromUser, toUser: chatToUser}).populate("fromUser toUser").exec()
+        socket.emit("get-into-chat", { user: {...user._doc, active:isActive}, messages})
     })
 
-    socket.on('check-roomId', async(userId) => {
-        var user = await User.findById(userId).exec()
-        io.emit('check-roomId', { user })
+    socket.on("typing", (data) => {
+        socket.broadcast.emit("typing", data)
     })
 
-    socket.on('create-roomId', ({ userIdLogin, userIdClicked }) => {
-        var roomName = userIdLogin + userIdClicked
-        connect.then(async db => {
-            id = new mongoose.Types.ObjectId()
-            var room = new Room({ _id: id, name: roomName })
-            room.save()
+    socket.on("typing-done", (data) => {
+        socket.broadcast.emit("typing-done", data)
+    })
 
-            var userLogin = await User.findById(userIdLogin).exec()
-            userLogin.roomId.push(id)
-            userLogin.save()
+    socket.on("send-message", async (data)=>{
+        var time = new Date()
+        new Message({
+            _id: new mongoose.Types.ObjectId(),
+            fromUser: data.from,
+            toUser: data.to,
+            message: data.message,
+            time
+        }).save()
 
-            var userClicked = await User.findById(userIdClicked).exec()
-            userClicked.roomId.push(id)
-            userClicked.save()
-        })
+        var toUser = users.findIndex(u => u.userId == data.to)
+        var fromUser = users.findIndex(u => u.userId == data.from)
+
+        var socketId = users[toUser].id
+        
+        data.fromUser = users[fromUser]
+        data.toUser = users[toUser]
+        data.time = time
+
+        socket.emit("send-message", (data))
+        io.to(socketId).emit("send-message", (data))
     })
 
     socket.on("disconnect", () => {

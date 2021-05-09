@@ -205,9 +205,11 @@ html {
 }
 
 .msg_time {
+    position: absolute;
+    bottom: -15px;
     left: 0;
     color: rgba(245, 237, 237, 0.774);
-    font-size: 13px;
+    font-size: 10px;
 }
 
 .msg_time_send {
