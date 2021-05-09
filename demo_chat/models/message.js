@@ -3,6 +3,8 @@ const Schema = mongoose.Schema
 
 
 const messageSchema = new Schema({
+    userId: String,
+    userRoom: String,
     username: {
         type: String
     },

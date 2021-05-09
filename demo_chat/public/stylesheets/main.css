@@ -156,7 +156,7 @@ html {
 }
 
 .user_info {
-    margin-top: auto;
+    margin-top: 10px;
     margin-bottom: auto;
     margin-left: 15px;
 }
@@ -172,6 +172,7 @@ html {
 }
 
 .video_cam {
+    margin-top: 15px;
     position: absolute;
     right: 30px;
 }
@@ -228,7 +229,7 @@ html {
     color: white;
     cursor: pointer;
     font-size: 20px;
-    margin-top: 10px;
+    margin-top: 33px;
     margin-right: 5px;
 }
 

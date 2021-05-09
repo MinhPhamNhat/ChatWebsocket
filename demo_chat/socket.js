@@ -41,10 +41,11 @@ io.on('connection', socket => {
     socket.on('chatMessage', msg => {
         var index = users.findIndex(u => u.id == socket.id)
         var name = users[index].name
-        formatMessages = formatMessage(name, msg)
+        var room = socket.id
+        formatMessages = formatMessage(socket.id, room, name, msg)
         io.emit('message', formatMessages)
         connect.then(db => {
-            let message_data = new Message({ username: name, content: msg, time: formatMessages.time })
+            let message_data = new Message({ userId: socket.id, userRoom: room, username: name, content: msg, time: formatMessages.time })
             message_data.save()
         })
     })

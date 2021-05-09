@@ -54,7 +54,7 @@ app.use(function(err, req, res, next) {
     res.render('error');
 });
 
-const PORT = 3000 || process.env.PORT
+const PORT = 3000
 const HOST = process.env.HOST
 var server = app.listen(PORT, console.log(HOST + ":" + PORT))
 
