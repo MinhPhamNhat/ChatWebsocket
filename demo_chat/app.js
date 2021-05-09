@@ -34,8 +34,10 @@ app.use(bodyParser.json());
 
 const indexRouter = require("./routes/IndexRouter")
 const loginRouter = require("./routes/LoginRouter")
+const signoutRouter = require("./routes/SignoutRouter")
 
 app.use('/login', loginRouter)
+app.use('/signout', authen.loginAuthen, signoutRouter)
 app.use('/', authen.loginAuthen, indexRouter)
 
 // catch 404 and forward to error handler
