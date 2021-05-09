@@ -16,22 +16,23 @@ const socketIO = {
     //     io.emit("list-user" ,{users, eventUser: {id, name, action: true}})
     // }
 }
-    // const botName = 'Van Nam'
+// const botName = 'Van Nam'
 io.on('connection', socket => {
     socket.on("user-join", async (userId) => {
         // Lấy người dùng từ db
         var user = await User.findById(userId).exec()
         // Tạo user mới để lưu vào list
-        var newUser = { 
+        var newUser = {
             id: socket.id,
-            name: user.name, 
-            picture: user.picture, 
+            name: user.name,
+            picture: user.picture,
             userId: user._id,
+            active: true,
             time: new Date()
         }
         users.push(newUser)
         // Event user là người dùng mới join vào socket
-        io.emit("list-user", { users, eventUser: { ...newUser, action: true }})
+        io.emit("list-user", { users, eventUser: { ...newUser, action: true } })
 
         // const user = userJion(id, username, room)
 
@@ -42,7 +43,33 @@ io.on('connection', socket => {
         // socket.broadcast.emit('message', formatMessage(botName, 'A People has joined the chat'))
     })
 
+    socket.on('typing', async (data) => {
+        if (data.text) {
+            var searchUser = await User.find({ name: { "$regex": data.text, "$options": "i" } }).exec()
+            searchUser = searchUser.map(u => {
+                for (i in users) {
+                    if (users[i].userId == u._id) {
+                        return users[i]
+                    }
+                }
+                return {
+                    name: u.name,
+                    picture: u.picture,
+                    userId: u._id,
+                    active: false,
+                }
+            })
+            searchUser = await Promise.all(searchUser)
+            
+            searchUser.sort((u1, u2) => {
+                return (u1.active === u2.active)? 0 : u1? -1 : 1
+            })
 
+            socket.emit("list-user", { users: searchUser })
+        }else{
+            io.emit("list-user", { users })
+        }
+    })
 
     // Listen for chatMessage
     socket.on('chatMessage', msg => {

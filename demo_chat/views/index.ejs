@@ -35,7 +35,7 @@
                 <div class="card mb-sm-3 mb-md-0 contacts_card">
                     <div class="card-header">
                         <div class="input-group">
-                            <input type="text" placeholder="Search..." name="" class="form-control search">
+                            <input type="text" placeholder="Search..." name="" onkeyup=typingCatch(this) onkeydown=typingStopCatch(this) class="form-control search search-holder">
                             <div class="input-group-prepend">
                                 <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
                             </div>
@@ -203,14 +203,9 @@
                 e.target.elements.input.focus()
             })
             // OutputMsg function
-
-
-
     })
 
-
-
-
+    
 
     const socket = io();
     var id;
@@ -225,7 +220,19 @@
 
     })
 
+    var typingTimer;
+    var doneTypingInterval = 100;
 
+    const typingCatch = (e) => {
+        var text = e.value
+        socket.emit("typing", { text })
+        // clearTimeout(typingTimer);
+        // typingTimer = setTimeout(() => { socket.emit("typing", { text }) }, doneTypingInterval);
+    }
+
+    const typingStopCatch = (e) => {
+        // clearTimeout(typingTimer);
+    }
 
 
     const showUserOnline = ({
@@ -233,7 +240,7 @@
         eventUser,
     }) => {
         var numberOfOnline = users.length - 1
-        $(".contacts .active").remove()
+        $(".contacts li").remove()
         users.forEach(u => {
             // Nếu người dùng trong user-list có id trên db trùng với userId được lấy ở trên thì bỏ qua không hiển thị trên list
             if (u.userId !== userId)
@@ -242,9 +249,9 @@
                 console.log(u.id, u.name)
             }
         })
-        $(".no-online").text(numberOfOnline)
         // Nếu người vừa online hay disconnect có id trên db trùng với userId được lấy ở trên thì không hiển thị thông báo,
         // nếu không thì hiển thị thông báo cho toàn server
+        if (eventUser)
         if (eventUser.userId !== userId) {
             if (eventUser.action) {
                 $("#online-notification strong").text(eventUser.name)
@@ -267,11 +274,11 @@
         <div class="d-flex bd-highlight" data-id="${user.id}" data-name= "${user.name}">
             <div class="img_cont" data-id="${user.id}" data-name= "${user.name}">
                 <div class="avatar rounded-circle" data-id="${user.id}" data-name= "${user.name}"><b><img src="${user.picture}"></b></div>
-                <span class="online_icon"></span>
+                <span class="online_icon ${user.active?"":"offline"}"></span>
             </div>
             <div class="user_info">
                 <span data-id="${user.id} "data-name= "${user.name}" >${user.name}</span>
-                <p>Online</p>
+                <p>${user.active?"Online":"Offline"}</p>
             </div>
         </div>
     </li>`
