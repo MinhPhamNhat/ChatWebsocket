@@ -10,11 +10,6 @@ var users = []
 var messages = []
 const socketIO = {
         io: io,
-        // join: (name) => {
-        //     console.log(users)
-        //     users.push({id, name, time: new Date()})
-        //     io.emit("list-user" ,{users, eventUser: {id, name, action: true}})
-        // }
     }
     // const botName = 'Van Nam'
 io.on('connection', socket => {
@@ -34,15 +29,9 @@ io.on('connection', socket => {
             // Event user là người dùng mới join vào socket
         io.emit("list-user", { users, eventUser: {...newUser, action: true } })
             // const user = userJion(id, username, room)
-
-        // socket.join(user.room)
-
-        // socket.emit('message', formatMessage(botName, 'Demo Chat'))
-
-        // socket.broadcast.emit('message', formatMessage(botName, 'A People has joined the chat'))
     })
 
-    socket.on('typing', async(data) => {
+    socket.on('searching', async(data) => {
         if (data.text) {
             var searchUser = await User.find({ name: { "$regex": data.text, "$options": "i" } }).exec()
             searchUser = searchUser.map(u => {
@@ -59,10 +48,6 @@ io.on('connection', socket => {
                 }
             })
             searchUser = await Promise.all(searchUser)
-
-            searchUser.sort((u1, u2) => {
-                return (u1.active === u2.active) ? 0 : u1 ? -1 : 1
-            })
 
             socket.emit("list-user", { users: searchUser })
         } else {
