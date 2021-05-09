@@ -107,9 +107,8 @@
 
                 roomIdLogin.forEach((rL) => {
                     roomIdClicked.forEach((rC) => {
-                        if (!empty(rL) && !empty(rC) && rL == rC) {
+                        if (rL !== undefined && rC !== undefined && rL == rC) {
                             roomId = rL
-                            console.log(roomId)
                         } else {
                             socket.emit('create-roomId', ({
                                 userIdLogin,

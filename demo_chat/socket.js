@@ -3,6 +3,7 @@ const Message = require('./models/message')
 const Room = require('./models/room')
 const connect = require('./middleware/dbconnect')
 const User = require('./models/user')
+const mongoose = require('mongoose')
 var { userJion, getCurrentUser } = require("./middleware/users")
 
 const io = require("socket.io")()
@@ -78,16 +79,15 @@ io.on('connection', socket => {
 
     socket.on('check-roomId', async(userId) => {
         var user = await User.findById(userId).exec()
-        socket.emit('check-roomId', { user })
+        io.emit('check-roomId', { user })
     })
 
-    socket.on('create-roomId', async({ userIdLogin, userIdClicked }) => {
-        roomName = userIdLogin + userIdClicked
-        await connect.then(db => {
-            let room = new Room({ name: roomName })
+    socket.on('create-roomId', ({ userIdLogin, userIdClicked }) => {
+        var roomName = userIdLogin + userIdClicked
+        connect.then(db => {
+            var room = new Room({ _id: new mongoose.Types.ObjectId(), name: roomName })
             room.save()
         })
-        rooms.push(room)
     })
 
     socket.on("disconnect", () => {
