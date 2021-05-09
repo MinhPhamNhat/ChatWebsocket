@@ -314,3 +314,7 @@ html {
     width: 50px;
     border-radius: 50%;
 }
+
+.user_cont{
+    cursor: pointer;
+}

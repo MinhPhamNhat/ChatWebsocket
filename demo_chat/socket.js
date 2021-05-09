@@ -84,6 +84,10 @@ io.on('connection', socket => {
         })
     })
 
+    socket.on("get-user-info", async (userId) =>{
+        var user = await User.findById(userId).exec()
+        socket.emit("get-user-info", {user})
+    })
 
     socket.on("disconnect", () => {
         var index = users.findIndex(u => u.id == socket.id)
