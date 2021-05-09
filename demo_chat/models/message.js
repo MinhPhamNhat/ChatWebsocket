@@ -4,7 +4,10 @@ const Schema = mongoose.Schema
 
 const messageSchema = new Schema({
     userId: String,
-    userRoom: String,
+    roomId: {
+        type: String,
+        ref: 'Room'
+    },
     username: {
         type: String
     },

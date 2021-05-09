@@ -63,13 +63,13 @@
                         <div id="offline-notification" class="alert alert-danger position-fixed small" style="bottom: 20px; right: 20px">
                             <strong>Trần Quang Trí</strong> đã thoát khỏi ứng dụng
                         </div>
-                          <input type="hidden" id="hidden-user-id" value='<%= user._id %>'>
+                        <input type="hidden" id="hidden-user-id" value='<%= user._id %>'>
                     </div>
                     <div class="card-footer"></div>
                 </div>
             </div>
             <div class="chat_room col-md-8 col-xl-6 chat">
-                <div class="card">
+                <!-- <div class="card">
                     <div class="card-header msg_head">
                         <div class="d-flex bd-highlight">
                             <div class="img_cont">
@@ -119,7 +119,7 @@
 
                     </div>
 
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -138,6 +138,7 @@
     $(document).on("click", '.user_info span', (e) => {
         var userIdClicked = e.target.dataset.id
         var userNameClicked = e.target.dataset.name
+        var userPictureCliecked = e.target.dataset.picture
         $(".chat_room .card").remove()
         var div = document.createElement('div')
         div.innerHTML =
@@ -146,7 +147,7 @@
                     <div class="card-header msg_head">
                         <div class="d-flex bd-highlight">
                             <div class="img_cont">
-                                <div class="avatar rounded-circle"><b>${userNameClicked.split(" ")[userNameClicked.split(" ").length-1][0]}</b></div>
+                                <div class="avatar rounded-circle"><b><img src="${userPictureCliecked}"></b></div>
                                 <span class="online_icon"></span>
                             </div>
                             <div class="user_info">
@@ -168,6 +169,19 @@
                         </div>
                     </div>
                     <div class="card-body msg_card_body">
+                        <% message_data.forEach(value => {%>
+                            <div class="d-flex justify-content-start mb-4">
+                                <div class="img_cont_msg ">
+                                    <div class="avatar rounded-circle"><b><img src="<%= user.picture%>"></b></div>
+                                </div>
+                                <div class="msg_cotainer">
+                                    <p>
+                                        <%= value.content %>
+                                    </p>
+                                    <span class="msg_time"><%= value.time %></span>
+                                </div>
+                            </div>
+                            <% }) %>
                     </div>
                     <div class="card-footer">
                         <form id="form" class="input-group" action="">
@@ -183,26 +197,29 @@
             `
         document.querySelector('.chat_room').appendChild(div)
 
-        // document.querySelector('.msg_card_body').scrollTop = document.querySelector('.msg_card_body').scrollHeight
-        //Message submit
-        //Msg from server
+        document.querySelector('.msg_card_body').scrollTop = document.querySelector('.msg_card_body').scrollHeight
+
+
         // chatMessage.scrollTop = chatMessage.scrollHeight
         const chatForm = document.getElementById('form')
 
-
+        //Message submit
         chatForm.addEventListener('submit', e => {
-                e.preventDefault();
+            e.preventDefault();
 
-                const msg = e.target.elements.input.value
+            const msg = e.target.elements.input.value
 
-                // Emit msg to server
-                socket.emit('chatMessage', msg)
+            // Emit msg to server
+            socket.emit('chatMessage', ({
+                msg,
+                userId
+            }))
 
-                // Clear input
-                e.target.elements.input.value = ''
-                e.target.elements.input.focus()
-            })
-            // OutputMsg function
+            // Clear input
+            e.target.elements.input.value = ''
+            e.target.elements.input.focus()
+        })
+
     })
 
     
@@ -282,7 +299,10 @@
             </div>
         </div>
     </li>`
+
     // ${user.name.split(" ")[user.name.split(" ").length-1][0]}
+
+    //Msg from server
     const chatMessage = document.querySelector('.msg_card_body')
     socket.on('message', messages => {
         OutputMsg(messages)
@@ -291,11 +311,12 @@
         chatMessage.scrollTop = chatMessage.scrollHeight
     })
 
+    // OutputMsg function
     function OutputMsg(msg) {
         var div_chat = document.createElement('div')
         div_chat.innerHTML = `<div class="d-flex justify-content-start mb-4">
                             <div class="img_cont_msg ">
-                                <div class="avatar rounded-circle"><b>${msg.username.split(" ")[msg.username.split(" ").length-1][0]}</b></div>
+                                <div class="avatar rounded-circle"><b><img src="<%= user.picture%>"></b></div>
                             </div>
                             <div class="msg_cotainer">
                                 <p>${msg.text}</p>

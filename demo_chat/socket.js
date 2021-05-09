@@ -18,7 +18,7 @@ const socketIO = {
 }
 // const botName = 'Van Nam'
 io.on('connection', socket => {
-    socket.on("user-join", async (userId) => {
+    socket.on("user-join", async(userId) => {
         // Lấy người dùng từ db
         var user = await User.findById(userId).exec()
         // Tạo user mới để lưu vào list
@@ -33,7 +33,6 @@ io.on('connection', socket => {
         users.push(newUser)
         // Event user là người dùng mới join vào socket
         io.emit("list-user", { users, eventUser: { ...newUser, action: true } })
-
         // const user = userJion(id, username, room)
 
         // socket.join(user.room)
@@ -72,14 +71,15 @@ io.on('connection', socket => {
     })
 
     // Listen for chatMessage
-    socket.on('chatMessage', msg => {
-        var index = users.findIndex(u => u.id == socket.id)
-        var name = users[index].name
-        var room = socket.id
-        formatMessages = formatMessage(socket.id, room, name, msg)
+    socket.on('chatMessage', ({ msg, userId }) => {
+        var index = users.findIndex(u => u.id == userId)
+        var picture = users.findIndex(u => u.picture == picture)
+        var name = users.findIndex(u => u.name == name)
+        var roomId = socket.id
+        formatMessages = formatMessage(socket.id, roomId, name, msg)
         io.emit('message', formatMessages)
         connect.then(db => {
-            let message_data = new Message({ userId: socket.id, userRoom: room, username: name, content: msg, time: formatMessages.time })
+            let message_data = new Message({ userId: socket.id, roomId: roomId, username: name, content: msg, picture: picture, time: formatMessages.time })
             message_data.save()
         })
     })
@@ -89,7 +89,7 @@ io.on('connection', socket => {
         var index = users.findIndex(u => u.id == socket.id)
         var user = users[index]
         users.splice(index, 1)
-        io.emit("list-user", { users, eventUser: { ...user, action: false } })
+        io.emit("list-user", { users, eventUser: {...user, action: false } })
     })
 })
 
