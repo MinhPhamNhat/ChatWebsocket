@@ -69,7 +69,7 @@
                 </div>
             </div>
             <div class="chat_room col-md-8 col-xl-6 chat">
-                <!-- <div class="card">
+                <div class="card">
                     <div class="card-header msg_head">
                         <div class="d-flex bd-highlight">
                             <div class="img_cont">
@@ -98,7 +98,7 @@
                         <% message_data.forEach(value => {%>
                             <div class="d-flex justify-content-start mb-4">
                                 <div class="img_cont_msg ">
-                                    <div class="avatar rounded-circle"><b><%=value.username.split(" ")[value.username.split(" ").length-1][0]%></b></div>
+                                    <div class="avatar rounded-circle"><b><%=value.name.split(" ")[value.name.split(" ").length-1][0]%></b></div>
                                 </div>
                                 <div class="msg_cotainer">
                                     <p>
@@ -119,7 +119,7 @@
 
                     </div>
 
-                </div> -->
+                </div>
             </div>
         </div>
     </div>
