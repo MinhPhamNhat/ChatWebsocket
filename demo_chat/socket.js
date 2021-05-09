@@ -44,8 +44,8 @@ io.on('connection', socket => {
         formatMessages = formatMessage(name, msg)
         io.emit('message', formatMessages)
         connect.then(db => {
-            let message_data = new Message({ username: name, content: msg, time: formatMessages.time })
-            message_data.save()
+            let msg = new Message({ username: name, content: msg, time: formatMessages.time })
+            msg.save()
         })
     })
 
