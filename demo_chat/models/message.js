@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 
 const messageSchema = new Schema({
     userId: String,
-    userRoom: String,
+    roomId: String,
     username: {
         type: String
     },

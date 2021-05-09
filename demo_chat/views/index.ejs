@@ -210,7 +210,10 @@
             const msg = e.target.elements.input.value
 
             // Emit msg to server
-            socket.emit('chatMessage', msg)
+            socket.emit('chatMessage', ({
+                msg,
+                userId
+            }))
 
             // Clear input
             e.target.elements.input.value = ''
