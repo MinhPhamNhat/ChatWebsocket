@@ -92,6 +92,7 @@
     const chatWith = (e) => {
         var userIdClicked = e.dataset.id
         var userIdLogin = `<%=user._id%>`
+        var roomId
 
 
         socket.emit("get-user-info", userIdClicked)
@@ -107,16 +108,17 @@
 
                 roomIdLogin.forEach((rL) => {
                     roomIdClicked.forEach((rC) => {
-                        if (rL !== undefined && rC !== undefined && rL == rC) {
+                        if (rL !== undefined && rC !== undefined && rL === rC) {
                             roomId = rL
-                        } else {
-                            socket.emit('create-roomId', ({
-                                userIdLogin,
-                                userIdClicked
-                            }))
                         }
                     })
                 })
+                if (roomId === null) {
+                    socket.emit('create-roomId', ({
+                        userIdLogin,
+                        userIdClicked
+                    }))
+                }
             })
 
             if (userClicked) {
@@ -173,19 +175,45 @@
                     e.preventDefault();
 
                     const msg = e.target.elements.input.value
-
-                    // Emit msg to server
+                    console.log(roomId)
+                        // Emit msg to server
                     socket.emit('chatMessage', ({
                         msg,
-                        userId
+                        userIdLogin,
+                        roomId
                     }))
 
                     // Clear input
                     e.target.elements.input.value = ''
                     e.target.elements.input.focus()
                 })
+
+                //Msg from server
+                const chatMessage = document.querySelector('.msg_card_body')
+                socket.on('message', messages => {
+                    OutputMsg(messages)
+
+                    //Scroll down
+                    chatMessage.scrollTop = chatMessage.scrollHeight
+                })
+
+                // OutputMsg function
+                function OutputMsg(msg) {
+                    var div_chat = document.createElement('div')
+                    div_chat.innerHTML = `<div class="d-flex justify-content-start mb-4">
+                            <div class="img_cont_msg ">
+                                <div class="avatar rounded-circle"><b><img src="<%= user.picture%>"></b></div>
+                            </div>
+                            <div class="msg_cotainer">
+                                <p>${msg.text}</p>
+                                <span class="msg_time">${msg.time}</span>
+                            </div>
+                        </div>`
+                    document.querySelector('.msg_card_body').appendChild(div_chat)
+                }
                 document.querySelector('.msg_card_body').scrollTop = document.querySelector('.msg_card_body').scrollHeight
             }
+
         })
 
 
@@ -275,30 +303,6 @@
         </li>`
 
     // ${user.name.split(" ")[user.name.split(" ").length-1][0]}
-
-    //Msg from server
-    const chatMessage = document.querySelector('.msg_card_body')
-    socket.on('message', messages => {
-        OutputMsg(messages)
-
-        //Scroll down
-        chatMessage.scrollTop = chatMessage.scrollHeight
-    })
-
-    // OutputMsg function
-    function OutputMsg(msg) {
-        var div_chat = document.createElement('div')
-        div_chat.innerHTML = `<div class="d-flex justify-content-start mb-4">
-                            <div class="img_cont_msg ">
-                                <div class="avatar rounded-circle"><b><img src="<%= user.picture%>"></b></div>
-                            </div>
-                            <div class="msg_cotainer">
-                                <p>${msg.text}</p>
-                                <span class="msg_time">${msg.time}</span>
-                            </div>
-                        </div>`
-        document.querySelector('.msg_card_body').appendChild(div_chat)
-    }
 </script>
 
 </html>

@@ -10,10 +10,10 @@ const userSchema = new Schema({
     picture: {
         type: String
     },
-    roomId: {
+    roomId: [{
         type: String,
         ref: 'Room'
-    }
+    }]
 })
 
 module.exports = mongoose.model('User', userSchema)

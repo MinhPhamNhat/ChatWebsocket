@@ -59,17 +59,14 @@ io.on('connection', socket => {
     })
 
     // Listen for chatMessage
-    socket.on('chatMessage', async({ msg, userId }) => {
-        var user = await User.findById(userId).exec()
-        var id = user._id
-        var name = user.username
-        var roomId = socket.id
-        formatMessages = formatMessage(id, roomId, name, msg)
+    socket.on('chatMessage', ({ msg, userIdLogin, roomId }) => {
+        formatMessages = formatMessage(userIdLogin, roomId, msg)
         io.emit('message', formatMessages)
         connect.then(db => {
-            let message_data = new Message({ userId: id, roomId: roomId, username: name, content: msg, time: formatMessages.time })
+            let message_data = new Message({ _id: new mongoose.Types.ObjectId(), userId: userIdLogin, roomId: roomId, content: msg, time: formatMessages.time })
             message_data.save()
         })
+
     })
 
     socket.on("get-user-info", async(userId) => {
@@ -84,9 +81,18 @@ io.on('connection', socket => {
 
     socket.on('create-roomId', ({ userIdLogin, userIdClicked }) => {
         var roomName = userIdLogin + userIdClicked
-        connect.then(db => {
-            var room = new Room({ _id: new mongoose.Types.ObjectId(), name: roomName })
+        connect.then(async db => {
+            id = new mongoose.Types.ObjectId()
+            var room = new Room({ _id: id, name: roomName })
             room.save()
+
+            var userLogin = await User.findById(userIdLogin).exec()
+            userLogin.roomId.push(id)
+            userLogin.save()
+
+            var userClicked = await User.findById(userIdClicked).exec()
+            userClicked.roomId.push(id)
+            userClicked.save()
         })
     })
 
