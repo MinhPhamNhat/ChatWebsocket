@@ -146,8 +146,8 @@ html {
     width: 15px;
     background-color: #4cd137;
     border-radius: 50%;
-    bottom: 0.8em;
-    right: 0.8em;
+    bottom: 1.2em;
+    right: 1.2em;
     border: 1.5px solid white;
 }
 
@@ -307,4 +307,10 @@ html {
 .active:hover .avatar {
     background-color: rgb(7, 142, 204);
     transition: 0.3s;
+}
+
+.avatar img{
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
 }

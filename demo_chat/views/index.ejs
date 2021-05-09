@@ -63,7 +63,7 @@
                         <div id="offline-notification" class="alert alert-danger position-fixed small" style="bottom: 20px; right: 20px">
                             <strong>Trần Quang Trí</strong> đã thoát khỏi ứng dụng
                         </div>
-                        <input type="hidden" id="hidden-name" value='<%= name %>'>
+                          <input type="hidden" id="hidden-user-id" value='<%= user._id %>'>
                     </div>
                     <div class="card-footer"></div>
                 </div>
@@ -73,11 +73,11 @@
                     <div class="card-header msg_head">
                         <div class="d-flex bd-highlight">
                             <div class="img_cont">
-                                <div class="avatar rounded-circle"><b><%=name.split(" ")[name.split(" ").length-1][0]%></b></div>
+                                <div class="avatar rounded-circle"><b><%=user.name.split(" ")[user.name.split(" ").length-1][0]%></b></div>
                                 <span class="online_icon"></span>
                             </div>
                             <div class="user_info">
-                                <span><%= name %></span>
+                                <span><%= user.name %></span>
                             </div>
                             <div class="video_cam">
                                 <span><i class="fas fa-phone"></i></span>
@@ -128,11 +128,11 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
 <script>
-    var userName;
-
+    var userId;
 
     $(document).ready(() => {
-        userName = $("#hidden-name").val();
+        // Lấy id người dùng trên database
+        userId = $("#hidden-user-id").val();
     })
 
     $(document).on("click", '.user_info span', (e) => {
@@ -215,11 +215,12 @@
     const socket = io();
     var id;
     socket.on('connect', () => {
-        socket.emit("user-join", userName)
+        socket.emit("user-join", userId)
 
         // socket.on('user-id', (userId) => {
         //     id = userId
         // })
+
         socket.on('list-user', showUserOnline)
 
     })
@@ -229,19 +230,22 @@
 
     const showUserOnline = ({
         users,
-        eventUser
+        eventUser,
     }) => {
         var numberOfOnline = users.length - 1
         $(".contacts .active").remove()
         users.forEach(u => {
-            if (u.id !== id)
+            // Nếu người dùng trong user-list có id trên db trùng với userId được lấy ở trên thì bỏ qua không hiển thị trên list
+            if (u.userId !== userId)
                 $(".contacts").prepend(createUserTag(u))
             else {
                 console.log(u.id, u.name)
             }
         })
         $(".no-online").text(numberOfOnline)
-        if (eventUser.id !== id) {
+        // Nếu người vừa online hay disconnect có id trên db trùng với userId được lấy ở trên thì không hiển thị thông báo,
+        // nếu không thì hiển thị thông báo cho toàn server
+        if (eventUser.userId !== userId) {
             if (eventUser.action) {
                 $("#online-notification strong").text(eventUser.name)
                 $("#online-notification").show(300)
@@ -262,7 +266,7 @@
     <li class="active" >
         <div class="d-flex bd-highlight" data-id="${user.id}" data-name= "${user.name}">
             <div class="img_cont" data-id="${user.id}" data-name= "${user.name}">
-                <div class="avatar rounded-circle" data-id="${user.id}" data-name= "${user.name}"><b>${user.name.split(" ")[user.name.split(" ").length-1][0]}</b></div>
+                <div class="avatar rounded-circle" data-id="${user.id}" data-name= "${user.name}"><b><img src="${user.picture}"></b></div>
                 <span class="online_icon"></span>
             </div>
             <div class="user_info">
@@ -271,10 +275,9 @@
             </div>
         </div>
     </li>`
-
+    // ${user.name.split(" ")[user.name.split(" ").length-1][0]}
     const chatMessage = document.querySelector('.msg_card_body')
     socket.on('message', messages => {
-        console.log(2)
         OutputMsg(messages)
 
         //Scroll down
@@ -292,7 +295,6 @@
                                 <span class="msg_time">${msg.time}</span>
                             </div>
                         </div>`
-        console.log(div_chat)
         document.querySelector('.msg_card_body').appendChild(div_chat)
     }
 </script>
