@@ -3,13 +3,14 @@ const Schema = mongoose.Schema
 
 
 const messageSchema = new Schema({
-    userId: String,
+    _id: mongoose.Schema.Types.ObjectId,
+    userId: {
+        type: String,
+        ref: 'User'
+    },
     roomId: {
         type: String,
         ref: 'Room'
-    },
-    username: {
-        type: String
     },
     content: String,
     time: String
