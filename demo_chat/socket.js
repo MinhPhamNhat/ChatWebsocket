@@ -9,19 +9,19 @@ var numberOfUserOnline = 0
 var users = []
 var messages = []
 const socketIO = {
-    io: io,
-    // join: (name) => {
-    //     console.log(users)
-    //     users.push({id, name, time: new Date()})
-    //     io.emit("list-user" ,{users, eventUser: {id, name, action: true}})
-    // }
-}
-// const botName = 'Van Nam'
+        io: io,
+        // join: (name) => {
+        //     console.log(users)
+        //     users.push({id, name, time: new Date()})
+        //     io.emit("list-user" ,{users, eventUser: {id, name, action: true}})
+        // }
+    }
+    // const botName = 'Van Nam'
 io.on('connection', socket => {
     socket.on("user-join", async(userId) => {
         // Lấy người dùng từ db
         var user = await User.findById(userId).exec()
-        // Tạo user mới để lưu vào list
+            // Tạo user mới để lưu vào list
         var newUser = {
             id: socket.id,
             name: user.name,
@@ -31,9 +31,9 @@ io.on('connection', socket => {
             time: new Date()
         }
         users.push(newUser)
-        // Event user là người dùng mới join vào socket
-        io.emit("list-user", { users, eventUser: { ...newUser, action: true } })
-        // const user = userJion(id, username, room)
+            // Event user là người dùng mới join vào socket
+        io.emit("list-user", { users, eventUser: {...newUser, action: true } })
+            // const user = userJion(id, username, room)
 
         // socket.join(user.room)
 
@@ -42,7 +42,7 @@ io.on('connection', socket => {
         // socket.broadcast.emit('message', formatMessage(botName, 'A People has joined the chat'))
     })
 
-    socket.on('typing', async (data) => {
+    socket.on('typing', async(data) => {
         if (data.text) {
             var searchUser = await User.find({ name: { "$regex": data.text, "$options": "i" } }).exec()
             searchUser = searchUser.map(u => {
@@ -59,27 +59,27 @@ io.on('connection', socket => {
                 }
             })
             searchUser = await Promise.all(searchUser)
-            
+
             searchUser.sort((u1, u2) => {
-                return (u1.active === u2.active)? 0 : u1? -1 : 1
+                return (u1.active === u2.active) ? 0 : u1 ? -1 : 1
             })
 
             socket.emit("list-user", { users: searchUser })
-        }else{
+        } else {
             io.emit("list-user", { users })
         }
     })
 
     // Listen for chatMessage
-    socket.on('chatMessage', ({ msg, userId }) => {
-        var index = users.findIndex(u => u.id == userId)
-        var picture = users.findIndex(u => u.picture == picture)
-        var name = users.findIndex(u => u.name == name)
+    socket.on('chatMessage', async({ msg, userId }) => {
+        var user = await User.findById(userId).exec()
+        var id = user._id
+        var name = user.username
         var roomId = socket.id
-        formatMessages = formatMessage(socket.id, roomId, name, msg)
+        formatMessages = formatMessage(id, roomId, name, msg)
         io.emit('message', formatMessages)
         connect.then(db => {
-            let message_data = new Message({ userId: socket.id, roomId: roomId, username: name, content: msg, picture: picture, time: formatMessages.time })
+            let message_data = new Message({ userId: id, roomId: roomId, username: name, content: msg, time: formatMessages.time })
             message_data.save()
         })
     })

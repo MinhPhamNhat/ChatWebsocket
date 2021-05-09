@@ -73,7 +73,7 @@
                     <div class="card-header msg_head">
                         <div class="d-flex bd-highlight">
                             <div class="img_cont">
-                                <div class="avatar rounded-circle"><b><%=user.name.split(" ")[user.name.split(" ").length-1][0]%></b></div>
+                                <div class="avatar rounded-circle" data-id="${user.id}" data-name="${user.name}"><b><img src="<%=user.picture%>"></b></div>
                                 <span class="online_icon"></span>
                             </div>
                             <div class="user_info">
@@ -98,7 +98,7 @@
                         <% message_data.forEach(value => {%>
                             <div class="d-flex justify-content-start mb-4">
                                 <div class="img_cont_msg ">
-                                    <div class="avatar rounded-circle"><b><%=value.name.split(" ")[value.name.split(" ").length-1][0]%></b></div>
+                                    <div class="avatar rounded-circle"><b><img src="<%= user.picture%>"></b></div>
                                 </div>
                                 <div class="msg_cotainer">
                                     <p>
@@ -262,7 +262,7 @@
 
     }
 
-    
+
 
     const socket = io();
     var id;
@@ -282,9 +282,11 @@
 
     const typingCatch = (e) => {
         var text = e.value
-        socket.emit("typing", { text })
-        // clearTimeout(typingTimer);
-        // typingTimer = setTimeout(() => { socket.emit("typing", { text }) }, doneTypingInterval);
+        socket.emit("typing", {
+                text
+            })
+            // clearTimeout(typingTimer);
+            // typingTimer = setTimeout(() => { socket.emit("typing", { text }) }, doneTypingInterval);
     }
 
     const typingStopCatch = (e) => {
@@ -298,31 +300,31 @@
         var numberOfOnline = users.length - 1
         $(".contacts li").remove()
         users.forEach(u => {
-            // Nếu người dùng trong user-list có id trên db trùng với userId được lấy ở trên thì bỏ qua không hiển thị trên list
-            if (u.userId !== userId)
-                $(".contacts").prepend(createUserTag(u))
-            else {
-                console.log(u.id, u.name)
-            }
-        })
-        // Nếu người vừa online hay disconnect có id trên db trùng với userId được lấy ở trên thì không hiển thị thông báo,
-        // nếu không thì hiển thị thông báo cho toàn server
+                // Nếu người dùng trong user-list có id trên db trùng với userId được lấy ở trên thì bỏ qua không hiển thị trên list
+                if (u.userId !== userId)
+                    $(".contacts").prepend(createUserTag(u))
+                else {
+                    console.log(u.id, u.name)
+                }
+            })
+            // Nếu người vừa online hay disconnect có id trên db trùng với userId được lấy ở trên thì không hiển thị thông báo,
+            // nếu không thì hiển thị thông báo cho toàn server
         if (eventUser)
-        if (eventUser.userId !== userId) {
-            if (eventUser.action) {
-                $("#online-notification strong").text(eventUser.name)
-                $("#online-notification").show(300)
-                setTimeout(() => {
-                    $("#online-notification").hide(300)
-                }, 2000)
-            } else {
-                $("#offline-notification strong").text(eventUser.name)
-                $("#offline-notification").show(300)
-                setTimeout(() => {
-                    $("#offline-notification").hide(300)
-                }, 2000)
+            if (eventUser.userId !== userId) {
+                if (eventUser.action) {
+                    $("#online-notification strong").text(eventUser.name)
+                    $("#online-notification").show(300)
+                    setTimeout(() => {
+                        $("#online-notification").hide(300)
+                    }, 2000)
+                } else {
+                    $("#offline-notification strong").text(eventUser.name)
+                    $("#offline-notification").show(300)
+                    setTimeout(() => {
+                        $("#offline-notification").hide(300)
+                    }, 2000)
+                }
             }
-        }
     }
 
     const createUserTag = (user) => `
