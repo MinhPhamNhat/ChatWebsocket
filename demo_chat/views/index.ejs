@@ -144,7 +144,7 @@
 
         socket.on("get-user-info", (user) => {
         if (user){
-            $('li[class^="active"]').remove()
+            $('li[class*="active"]').removeClass("active")
             $(`.user-${user.user._id}`).addClass("active")
             $(".chat_room .card").remove()
             var div = document.createElement('div')
