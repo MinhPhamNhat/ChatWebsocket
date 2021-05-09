@@ -144,6 +144,8 @@
 
         socket.on("get-user-info", (user) => {
         if (user){
+            $('li[class^="active"]').remove()
+            $(`.user-${user.user._id}`).addClass("active")
             $(".chat_room .card").remove()
             var div = document.createElement('div')
             div.innerHTML =
@@ -328,8 +330,8 @@
     }
 
     const createUserTag = (user) => `
-    <li>
-        <div class="d-flex bd-highlight user_cont user-${user.userId}" data-id="${user.userId}" onclick=chatWith(this)>
+    <li class="user-${user.userId}">
+        <div class="d-flex bd-highlight user_cont" data-id="${user.userId}" onclick=chatWith(this)>
             <div class="img_cont">
                 <div class="avatar rounded-circle"><b><img src="${user.picture}"></b></div>
                 <span class="online_icon ${user.active?"":"offline"}"></span>
