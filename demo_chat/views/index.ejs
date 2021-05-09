@@ -63,7 +63,7 @@
                         <div id="offline-notification" class="alert alert-danger position-fixed small" style="bottom: 20px; right: 20px">
                             <strong>Trần Quang Trí</strong> đã thoát khỏi ứng dụng
                         </div>
-                          <input type="hidden" id="hidden-user-id" value='<%= user._id %>'>
+                        <input type="hidden" id="hidden-user-id" value='<%= user._id %>'>
                     </div>
                     <div class="card-footer"></div>
                 </div>
@@ -138,6 +138,7 @@
     $(document).on("click", '.user_info span', (e) => {
         var userIdClicked = e.target.dataset.id
         var userNameClicked = e.target.dataset.name
+        var userPictureCliecked = e.target.dataset.picture
         $(".chat_room .card").remove()
         var div = document.createElement('div')
         div.innerHTML =
@@ -146,7 +147,7 @@
                     <div class="card-header msg_head">
                         <div class="d-flex bd-highlight">
                             <div class="img_cont">
-                                <div class="avatar rounded-circle"><b>${userNameClicked.split(" ")[userNameClicked.split(" ").length-1][0]}</b></div>
+                                <div class="avatar rounded-circle"><b><img src="${userPictureCliecked}"></b></div>
                                 <span class="online_icon"></span>
                             </div>
                             <div class="user_info">
@@ -243,8 +244,8 @@
             }
         })
         $(".no-online").text(numberOfOnline)
-        // Nếu người vừa online hay disconnect có id trên db trùng với userId được lấy ở trên thì không hiển thị thông báo,
-        // nếu không thì hiển thị thông báo cho toàn server
+            // Nếu người vừa online hay disconnect có id trên db trùng với userId được lấy ở trên thì không hiển thị thông báo,
+            // nếu không thì hiển thị thông báo cho toàn server
         if (eventUser.userId !== userId) {
             if (eventUser.action) {
                 $("#online-notification strong").text(eventUser.name)
@@ -264,18 +265,18 @@
 
     const createUserTag = (user) => `
     <li class="active" >
-        <div class="d-flex bd-highlight" data-id="${user.id}" data-name= "${user.name}">
-            <div class="img_cont" data-id="${user.id}" data-name= "${user.name}">
-                <div class="avatar rounded-circle" data-id="${user.id}" data-name= "${user.name}"><b><img src="${user.picture}"></b></div>
+        <div class="d-flex bd-highlight" data-id="${user.userId}" data-name= "${user.name}">
+            <div class="img_cont" data-id="${user.userId}" data-name= "${user.name}">
+                <div class="avatar rounded-circle" data-id="${user.userId}" data-name= "${user.name}"><b><img src="${user.picture}"></b></div>
                 <span class="online_icon"></span>
             </div>
             <div class="user_info">
-                <span data-id="${user.id} "data-name= "${user.name}" >${user.name}</span>
+                <span data-id="${user.userId} "data-name= "${user.name}" data-picture="${user.picture}">${user.name}</span>
                 <p>Online</p>
             </div>
         </div>
     </li>`
-    // ${user.name.split(" ")[user.name.split(" ").length-1][0]}
+        // ${user.name.split(" ")[user.name.split(" ").length-1][0]}
     const chatMessage = document.querySelector('.msg_card_body')
     socket.on('message', messages => {
         OutputMsg(messages)
