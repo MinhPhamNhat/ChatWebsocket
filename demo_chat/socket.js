@@ -47,12 +47,13 @@ io.on('connection', socket => {
     // Listen for chatMessage
     socket.on('chatMessage', ({ msg, userId }) => {
         var index = users.findIndex(u => u.id == userId)
-        var name = users[index].name
-        var room = socket.id
-        formatMessages = formatMessage(socket.id, room, name, msg)
+        var picture = users.findIndex(u => u.picture == picture)
+        var name = users.findIndex(u => u.name == name)
+        var roomId = socket.id
+        formatMessages = formatMessage(socket.id, roomId, name, msg)
         io.emit('message', formatMessages)
         connect.then(db => {
-            let message_data = new Message({ userId: socket.id, roomId: room, username: name, content: msg, time: formatMessages.time })
+            let message_data = new Message({ userId: socket.id, roomId: roomId, username: name, content: msg, picture: picture, time: formatMessages.time })
             message_data.save()
         })
     })
