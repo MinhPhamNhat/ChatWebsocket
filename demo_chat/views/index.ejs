@@ -139,26 +139,51 @@
 
     const chatWith = (e) => {
         var userIdClicked = e.dataset.id
+        var userIdLogin = `<%=user._id%>`
+
 
         socket.emit("get-user-info", userIdClicked)
 
-        socket.on("get-user-info", (user) => {
-            if (user) {
+        socket.on("get-user-info", (userClicked) => {
+            var roomIdClicked = []
+            roomIdClicked.push(userClicked.roomId)
+            socket.emit('check-roomId', userIdLogin)
+
+            socket.on('check-roomId', (userLogin) => {
+                var roomIdLogin = []
+                roomIdLogin.push(userLogin.roomId)
+
+                roomIdLogin.forEach((rL) => {
+                    roomIdClicked.forEach((rC) => {
+                        if (!empty(rL) && !empty(rC) && rL == rC) {
+                            roomId = rL
+                            console.log(roomId)
+                        } else {
+                            socket.emit('create-roomId', ({
+                                userIdLogin,
+                                userIdClicked
+                            }))
+                        }
+                    })
+                })
+            })
+
+            if (userClicked) {
                 $('li[class^="active"]').remove()
-                $(`.user-${user.user._id}`).addClass("active")
+                $(`.user-${userClicked.user._id}`).addClass("active")
                 $(".chat_room .card").remove()
                 var div = document.createElement('div')
                 div.innerHTML =
                     `
-                <div class="card" data-id = "${user.user._id}">
+                <div class="card" data-id = "${userClicked.user._id}">
                     <div class="card-header msg_head">
                         <div class="d-flex bd-highlight">
                             <div class="img_cont">
-                                <div class="avatar rounded-circle"><b><img src="${user.user.picture}"></b></div>
+                                <div class="avatar rounded-circle"><b><img src="${userClicked.user.picture}"></b></div>
                                 <span class="online_icon"></span>
                             </div>
                             <div class="user_info">
-                                <span>${user.user.name}</span>
+                                <span>${userClicked.user.name}</span>
                             </div>
                             <div class="video_cam">
                                 <span><i class="fas fa-phone"></i></span>

@@ -1,5 +1,6 @@
 const formatMessage = require("./middleware/messages");
 const Message = require('./models/message')
+const Room = require('./models/room')
 const connect = require('./middleware/dbconnect')
 const User = require('./models/user')
 var { userJion, getCurrentUser } = require("./middleware/users")
@@ -8,6 +9,7 @@ const io = require("socket.io")()
 var numberOfUserOnline = 0
 var users = []
 var messages = []
+var rooms = []
 const socketIO = {
         io: io,
         // join: (name) => {
@@ -84,9 +86,23 @@ io.on('connection', socket => {
         })
     })
 
-    socket.on("get-user-info", async (userId) =>{
+    socket.on("get-user-info", async(userId) => {
         var user = await User.findById(userId).exec()
-        socket.emit("get-user-info", {user})
+        socket.emit("get-user-info", { user })
+    })
+
+    socket.on('check-roomId', async(userId) => {
+        var user = await User.findById(userId).exec()
+        socket.emit('check-roomId', { user })
+    })
+
+    socket.on('create-roomId', async({ userIdLogin, userIdClicked }) => {
+        roomName = userIdLogin + userIdClicked
+        await connect.then(db => {
+            let room = new Room({ name: roomName })
+            room.save()
+        })
+        rooms.push(room)
     })
 
     socket.on("disconnect", () => {
