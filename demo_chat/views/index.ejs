@@ -136,20 +136,20 @@
 
     })
 
-    
+
     const chatWith = (e) => {
         var userIdClicked = e.dataset.id
 
         socket.emit("get-user-info", userIdClicked)
 
         socket.on("get-user-info", (user) => {
-        if (user){
-            $('li[class^="active"]').remove()
-            $(`.user-${user.user._id}`).addClass("active")
-            $(".chat_room .card").remove()
-            var div = document.createElement('div')
-            div.innerHTML =
-            `
+            if (user) {
+                $('li[class^="active"]').remove()
+                $(`.user-${user.user._id}`).addClass("active")
+                $(".chat_room .card").remove()
+                var div = document.createElement('div')
+                div.innerHTML =
+                    `
                 <div class="card" data-id = "${user.user._id}">
                     <div class="card-header msg_head">
                         <div class="d-flex bd-highlight">
@@ -234,33 +234,32 @@
 
                 </div>
             `
-            document.querySelector('.chat_room').appendChild(div)
+                document.querySelector('.chat_room').appendChild(div)
+                const chatForm = document.getElementById('form')
 
-            document.querySelector('.msg_card_body').scrollTop = document.querySelector('.msg_card_body').scrollHeight
+                //Message submit
+                chatForm.addEventListener('submit', e => {
+                    e.preventDefault();
+
+                    const msg = e.target.elements.input.value
+
+                    // Emit msg to server
+                    socket.emit('chatMessage', ({
+                        msg,
+                        userId
+                    }))
+
+                    // Clear input
+                    e.target.elements.input.value = ''
+                    e.target.elements.input.focus()
+                })
+                document.querySelector('.msg_card_body').scrollTop = document.querySelector('.msg_card_body').scrollHeight
             }
         })
-       
 
 
-        // chatMessage.scrollTop = chatMessage.scrollHeight
-        const chatForm = document.getElementById('form')
 
-        //Message submit
-        chatForm.addEventListener('submit', e => {
-            e.preventDefault();
 
-            const msg = e.target.elements.input.value
-
-            // Emit msg to server
-            socket.emit('chatMessage', ({
-                msg,
-                userId
-            }))
-
-            // Clear input
-            e.target.elements.input.value = ''
-            e.target.elements.input.focus()
-        })
 
     }
 
