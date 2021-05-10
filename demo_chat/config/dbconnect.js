@@ -1,6 +1,14 @@
 const mongoose = require('mongoose')
 
-const connect = mongoose.connect(process.env.MONGODB_CONFIG, {
+require('dotenv').config()
+
+mongoose.connect("mongodb+srv://admin:demochatsocket@demochatsocket.mxecd.mongodb.net/myChat?retryWrites=true&w=majority", {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
 })
+
+// mongoose.connect("mongodb+srv://admin:demochatsocket@demochatsocket.mxecd.mongodb.net/myChat?retryWrites=true&w=majority", {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true
+// })

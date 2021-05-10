@@ -12,8 +12,8 @@ passport.deserializeUser((user, done) => {
 
 
 passport.use('google', new GooglePassport({
-    clientID: '1003423118803-ukvb5i00ssnjq9uckdrch5oesj3d65tl.apps.googleusercontent.com',
-    clientSecret: 'A2pHPaD4iUY3zMZnFQYUVvMK',
+    clientID: '279719051312-a6v0h7kif6sjl5e1au3gbidnoman2ifi.apps.googleusercontent.com',
+    clientSecret: 'YM8h_cQsQmREMCkbP_QiGK5M',
     callbackURL: 'http://localhost:8080/login/account/callback',
 }, async(accessToken, refreshToken, profile, done) => {
     var { sub, name, picture } = profile._json
@@ -31,6 +31,8 @@ passport.use('google', new GooglePassport({
                 })
             }
         }).catch(err => {
+            console.log(err)
+            console.log("Failed to login" )
             done(null, false, { message: "Failed to login" })
         })
 }))
