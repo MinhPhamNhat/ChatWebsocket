@@ -22,11 +22,10 @@ io.on('connection', socket => {
             time: new Date()
         }
         // Nếu người dùng đã có trong list thì không thêm vào nữa
-        var checkUser = users.findIndex(u=> u.id === socket.id)
-        if (checkUser===-1)
+        var checkUser = users.findIndex(u=> u.userId === userId)
+        if (checkUser !== -1)
+        users.splice(checkUser, 1)
         users.push(newUser)
-        else
-        newUser = users[checkUser]
 
         // Event user là người dùng tác động đến list. Ví dụ join hoặc disconnect
         io.emit("list-user", { users, eventUser: {...newUser, action: true } })

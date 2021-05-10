@@ -1,5 +1,4 @@
 const express = require("express")
-const connect = require('../middleware/dbconnect')
 const router = express.Router()
 
 const io = require("socket.io")()
