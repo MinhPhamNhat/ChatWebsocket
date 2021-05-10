@@ -30,6 +30,7 @@
 <style>
     .typing-msg{
         display: none;
+        color: white;
     }
 </style>
 <body>
@@ -111,9 +112,9 @@
     const typingCatch = (e) => {
         var userChatId = e.dataset.id
         var name = e.dataset.name
-        socket.emit("typing", { userChatId, name })
+        socket.emit("typing", { userSendChat: userId, userChatId, name })
         clearTimeout(typingTimer);
-        typingTimer = setTimeout(() => { socket.emit("typing-done",  { userChatId, name }) }, doneTypingInterval);
+        typingTimer = setTimeout(() => { socket.emit("typing-done",  {  userSendChat: userId,userChatId, name }) }, doneTypingInterval);
     }
 
     const typingStopCatch = (e) => {
@@ -121,27 +122,26 @@
     }
 
     socket.on("typing", (data) => {
-        $(".typing-msg strong").text(data.name)
-        $(".typing-msg").show()
+        console.log(data)
+        $(`.chat-${data.userSendChat} .typing-msg strong`).text(data.name)
+        $(`.chat-${data.userSendChat} .typing-msg `).show()
     })
 
     socket.on("typing-done", (data) => {
-        $(".typing-msg strong").text('')
-        $(".typing-msg").hide()
-    })
-
-    socket.on("send-message", (data)=>{
-        createMessage(data)
+        $(`.chat-${data.userSendChat} .typing-msg strong`).text('')
+        $(`.chat-${data.userSendChat} .typing-msg `).hide()
     })
 
     const createMessage = (message) => {
         var isSender = message.fromUser.userId===userId
+        console.log(message)
         if (isSender){
             var msgCont = $(`.chat-${message.toUser.userId} .msg_card_body `)
         }else{
             var msgCont = $(`.chat-${message.fromUser.userId} .msg_card_body `)
         }
         msgCont.append(createMessageTag(message, isSender))
+        msgCont.animate({ scrollTop: msgCont[0].scrollHeight}, 1000);
     }
 
     const formatTime = (time) => {
@@ -152,7 +152,6 @@
     }
 
     const createMessageTag = (message, isSender)=>{
-        console.log(message)
         if (isSender){
             return `
             <div class="d-flex justify-content-end mb-4">
@@ -169,7 +168,7 @@
             return `
             <div class="d-flex justify-content-start mb-4">
                 <div class="img_cont_msg">
-                    <img src="${message.toUser.picture}" class="rounded-circle user_img_msg">
+                    <img src="${message.fromUser.picture}" class="rounded-circle user_img_msg">
                 </div>
                 <div class="msg_cotainer">
                     ${message.message}
@@ -185,9 +184,16 @@
         if (keycode === 13){
             var userChatId = e.target.dataset.id
             var message = e.target.value
-            socket.emit('send-message', {from: userId, message, to:userChatId})
+            if (message){
+                socket.emit('send-message', {from: userId, message, to:userChatId})
+            }
         }
     }
+
+    socket.on("send-message", (data)=>{
+        console.log(data)
+        createMessage(data)
+    })
 
     const searchingCatch = (e) => {
         var text = e.value
@@ -205,22 +211,38 @@
         socket.on("get-into-chat", (data) => {
             var userClickedInfo = data.user
             var messages = data.messages
+
             if (userClickedInfo) {
-                $('li[class*="active"]').removeClass("active")
-                $(`.user-${userClickedInfo._id}`).addClass("active")
+
+                createChatTab(userClickedInfo)
+
+                var msgCont = $(`.chat-${userClickedInfo._id}  .msg_card_body`)
+
+                messages.forEach(msg => {
+                    msgCont.append(createMessageTag(msg, msg.fromUser._id===userId))
+                })
+                
+                msgCont.animate({ scrollTop: msgCont[0].scrollHeight}, 1000);
+            }
+        })
+    }
+    
+    const createChatTab = (userInChat) => {
+        $('li[class*="active"]').removeClass("active")
+                $(`.user-${userInChat._id}`).addClass("active")
                 $(".chat_room .card").remove()
                 var div = document.createElement('div')
                 div.innerHTML =
                     `
-                <div class="card chat-${userClickedInfo._id}" data-id ="${userClickedInfo._id}">
+                <div class="card chat-${userInChat._id}" data-id ="${userInChat._id}">
                     <div class="card-header msg_head">
                         <div class="d-flex bd-highlight">
                             <div class="img_cont">
-                                <div class="avatar rounded-circle"><b><img src="${userClickedInfo.picture}"></b></div>
-                                <span class="online_icon ${!userClickedInfo.active?"offline":""}"></span>
+                                <div class="avatar rounded-circle"><b><img src="${userInChat.picture}"></b></div>
+                                <span class="online_icon ${!userInChat.active?"offline":""}"></span>
                             </div>
                             <div class="user_info">
-                                <span>${userClickedInfo.name}</span>
+                                <span>${userInChat.name}</span>
                             </div>
                             <div class="video_cam">
                                 <span><i class="fas fa-phone"></i></span>
@@ -242,7 +264,7 @@
                     <div class="card-footer">
                         <p class="typing-msg"><strong></strong> đang gõ ... </p>
                         <div id="form" class="input-group" action="">
-                            <input id="input"  onkeyup="typingCatch(this);sendChat(event)" onkeydown=typingStopCatch(this) data-id="${userClickedInfo._id}" data-name="${userClickedInfo.name}" class="form-control type_msg" autocomplete="off" placeholder="Type your message..." />
+                            <input id="input"  onkeyup="sendChat(event) ; typingCatch(this)" onkeydown=typingStopCatch(this) data-id="${userInChat._id}" data-name="${userInChat.name}" class="form-control type_msg" autocomplete="off" placeholder="Type your message..." />
                             <div class="input-group-append">
                                 <button class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></button>
                             </div>
@@ -253,14 +275,8 @@
                 </div>
             `
                 document.querySelector('.chat_room').appendChild(div)
-
-                messages.forEach(msg => {
-                    $(`.chat-${userClickedInfo._id}  .msg_card_body`).append(createMessageTag(msg, msg.fromUser._id===userId))
-                })
-            }
-        })
     }
-    
+
     const showUserOnline = ({
         users,
         eventUser,

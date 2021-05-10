@@ -28,7 +28,11 @@ io.on('connection', socket => {
             active: true,
             time: new Date()
         }
+        var checkUser = users.findIndex(u=> u.id === socket.id)
+        if (checkUser===-1)
         users.push(newUser)
+        else
+        newUser = users[checkUser]
             // Event user là người dùng mới join vào socket
         io.emit("list-user", { users, eventUser: {...newUser, action: true } })
             // const user = userJion(id, username, room)
@@ -73,9 +77,9 @@ io.on('connection', socket => {
         var chatfromUser = data.fromUser
         var chatToUser = data.toUser
         var user = await User.findById(chatToUser).exec()
-        var isActive = users.findIndex(u => u.chatToUser == chatToUser)!==-1
+        var isActive = users.findIndex(u => u.userId == chatToUser)!==-1
 
-        var messages = await Message.find({fromUser: chatfromUser, toUser: chatToUser}).populate("fromUser toUser").exec()
+        var messages = await Message.find({$or:[{fromUser: chatfromUser, toUser: chatToUser}, {fromUser: chatToUser, toUser: chatfromUser }]}).sort({time: 1}).populate("fromUser toUser").exec()
         socket.emit("get-into-chat", { user: {...user._doc, active:isActive}, messages})
     })
 
@@ -99,15 +103,26 @@ io.on('connection', socket => {
 
         var toUser = users.findIndex(u => u.userId == data.to)
         var fromUser = users.findIndex(u => u.userId == data.from)
-
-        var socketId = users[toUser].id
         
+        if(toUser === -1){
+            var user = await User.findById(data.to).exec()
+            data.toUser= {
+                name: user.name,
+                userId: user._id,
+                picture: user.picture
+            } 
+        }else{
+            data.toUser = users[toUser]
+        }
         data.fromUser = users[fromUser]
-        data.toUser = users[toUser]
         data.time = time
 
         socket.emit("send-message", (data))
-        io.to(socketId).emit("send-message", (data))
+
+        if(toUser !== -1){
+            var socketId = users[toUser].id
+            io.to(socketId).emit("send-message", (data))
+        }
     })
 
     socket.on("disconnect", () => {
