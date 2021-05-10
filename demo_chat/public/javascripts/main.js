@@ -202,7 +202,7 @@
             var message = e.target.value
             if (message){
                 socket.emit('send-message', {from: userId, message, to:userChatId})
-                e.target.value
+                e.target.value = ""
             }
         }
     }
