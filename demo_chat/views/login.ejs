@@ -1,114 +1,41 @@
-<!--
-  Created by: Mai Van Manh
-  Date: 11/02/2020
--->
-<!DOCTYPE html>
-<html lang="en">
+<html>
+
 
 <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css    ">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <style>
-        p.item {
-            padding: 16px;
-            text-align: center;
-            border-radius: 8px;
-            color: white;
-            background-color: green;
-        }
-        
-        .google-button {
-            height: 40px;
-            width: 100%;
-            background-color: #4688F1;
-            color: white;
-            text-align: center;
-            line-height: 40px;
-            border-radius: 2px;
-        }
-        
-        .google-button:hover {
-            cursor: pointer;
-            background-color: #2563c7;
-            transition: 0.3s;
-        }
-    </style>
+
+    <link href="/stylesheets/main.css" rel="stylesheet">
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <title>Chat</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"></script>
+
+    </script>
 </head>
-
-<body class="bg-secondary">
-
-    <h3 class="text-center my-5 text-light">User Login</h3>
-
-    <!-- buộc toàn bộ dòng và cột phải bỏ trong class container -->
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-10 col-lg-8 col-xl-5">
-                <div class="border p-3 rounded bg-light">
-
-                    <form>
-                        <div class="form-group">
-                            <label for="user">Username</label>
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                    <i class="fas fa-user"></i>
-                  </span>
-                                </div>
-                                <input id="username" type="text" class="form-control" placeholder="Username">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="pass">Password</label>
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                    <i class="fas fa-lock"></i>
-                  </span>
-                                </div>
-                                <input type="password" class="form-control" placeholder="Password">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="customCheck" name="example1">
-                                <label class="custom-control-label" for="customCheck">Remember</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="alert alert-danger alert-dismissible fade show" style="display: none;">
-                                <button type="button" class="close" data-dismiss="alert">&times;</button> Invalid username or password!
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-success px-5" type="submit">Login</button>
-                        </div>
-                        <div class="form-group">
-                            <p>Don't have any account? <a href="#">Register now!</a></p>
-                        </div>
-                        <div class="google-button mt-4" onclick="window.location.href ='/login/account' ">
-                            Đăng nhập với Google
-                        </div>
-
-                    </form>
-                </div>
-            </div>
+<body>
+    <div class="container-fluid h-100">
+        <div class="login" onclick="window.location.href = '/login/account'">
+            <img class="google-login" src="/images/google.jpg">
+            <h2>Đăng nhập với google</h2>
         </div>
     </div>
-
 </body>
-<script>
-    $(document).ready(() => {
-        // $(".google-button").on('click', ()= >{
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.1/qs.min.js" integrity="sha512-aTKlYRb1QfU1jlF3k+aS4AqTpnTXci4R79mkdie/bp6Xm51O5O3ESAYhvg6zoicj/PD6VYY0XrYwsWLcvGiKZQ==" crossorigin="anonymous"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
+<script src="/javascripts/main.js"></script>
 
-        // })
-    })
-</script>
 
 </html>

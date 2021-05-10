@@ -5,7 +5,6 @@ var cookieParser = require('cookie-parser');
 var passport = require("passport")
 var socketio = require('socket.io')
 var authen = require("./middleware/authen")
-var messages = require("./middleware/messages")
 const bodyParser = require("body-parser");
 
 
